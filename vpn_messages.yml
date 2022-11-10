@@ -1,0 +1,233 @@
+common:
+  error: &common_error
+    parse_mode: null
+    text:
+      ru: |
+        ❌ Упс! Что-то пошло не так...
+      default: |
+        ❌ Oops! Something went wrong...
+
+welcome:
+  parse_mode: null
+  text:
+    ru: |
+      👋 Привет, {{ from.first_name | default('Аноним') }}
+    default: |
+      👋 Hi, {{ from.first_name | default('Anonym') }}
+  buttons:
+  - &faq_button
+    text:
+      ru: ❓ ЧаВо
+      default: ❓ F.A.Q
+    cb_data: faq_cb
+  - &details_button
+    text:
+      ru: |
+        📜 Расскажи подробнее
+      default: |
+        📜 More details
+    cb_data: details_cb
+  - &go_button
+    text:
+      ru: ⏩ Далее
+      default: ⏩ Next
+    cb_data: go_cb
+  fallback:
+    <<: *common_error
+
+details:
+  parse_mode: null
+  text:
+    ru: |
+      Подробное описание действий
+    default: |
+      Details description
+  buttons:
+  - <<: *faq_button
+  - &stop_button
+    text:
+      ru: ⛔️ Я передумал
+      default: ⛔️ I stop
+    cb_data: stop_cb
+  - <<: *go_button
+  fallback:
+    <<: *common_error
+
+faq:
+  parse_mode: null
+  text:
+    ru: |
+      Вопросы и ответы
+    default: |
+      Questions and answers
+  buttons:
+  - <<: *details_button
+  - <<: *stop_button
+  - <<: *go_button
+  fallback:
+    <<: *common_error
+
+stop:
+  parse_mode: null
+  text:
+    ru: |
+      Ладно, пока! 👋
+    default: |
+      So, bye! 👋
+  fallback:
+    <<: *common_error
+
+give_host:
+  parse_mode: MarkdownV2
+  text:
+    ru: |
+      Введи *IP* или *DNS* имя сервера ⬇️
+    default: |
+      Give me an *IP* or *DNS* name of server ⬇️
+  fallback:
+    <<: *common_error
+
+give_user:
+  parse_mode: MarkdownV2
+  text:
+    ru: |
+      Введи *ИМЯ* root\-пользователя сервера ⬇️
+    default: |
+      Give me a server's *USERNAME* with root privileges ⬇️
+  fallback: 
+    <<: *common_error
+
+give_password:
+  parse_mode: MarkdownV2
+  text:
+    ru: |
+      Введи *ПАРОЛЬ* от root\-пользователя ⬇️
+    default: |
+      Give me a *PASSWORD* of user with root privileges ⬇️
+  fallback:
+    <<: *common_error
+
+delete_password:
+  parse_mode: MarkdownV2
+  text:
+    ru: |
+      ⚠️ _Сообщение с паролем было удалено_
+    default: ⚠️ _Message with the password was removed_
+  fallback:
+    <<: *common_error
+
+confirm_data:
+  parse_mode: MarkdownV2
+  text:
+    ru: |
+      ✅ Данные для подключения проверены, доступ получен
+
+      Сервер\: {{ host }}
+      Имя пользователя\: {{ username }}
+      Пароль\: ||{{ password }}||
+    default: |
+      ✅ Connection data is correct, accessed
+
+      Host\: {{ host }}
+      Username\: {{ username }}
+      Password\: ||{{ password }}||
+  buttons:
+  - text:
+      ru: 👥  Ввести список клиентов сервера
+      default: 👥 Enter the server's clients list
+    cb_data: req_clients_cd
+  - <<: *stop_button
+  fallback:
+    parse_mode: MarkdownV2
+    text:
+      ru: |
+        ❌ Некорректные данные подключения
+
+        Сервер\: {{ host }}
+        Имя пользователя\: {{ username }}
+        Пароль\: ||{{ password }}||
+      default: |
+        ❌ Incorrect connection data
+
+        Host\: {{ host }}
+        Username\: {{ username }}
+        Password\: ||{{ password }}||
+    buttons:
+    - text:
+        ru: 🔄 Повторно ввести данные подключения
+        default: 🔄 Try again
+      cb_data: go_cb
+    - <<: *stop_button
+
+give_clients:
+  parse_mode: MarkdownV2
+  text:
+    ru: |
+      Введи список клиентов через *пробел* 👥 ⬇️
+    default: |
+      Give me a *space* separated list of clients 👥 ⬇️
+  fallback:
+    <<: *common_error
+
+process_clients:
+  parse_mode: null
+  text:
+    ru: |
+      ✅ Список клиентов корректен
+
+      {% for client in vpn_clients -%}
+      {{ client }}
+      {% endfor -%}
+    default: |
+      ✅ List of clients are correct
+
+      {% for client in vpn_clients -%}
+      {{ client }}
+      {% endfor -%}
+  buttons:
+  - text:
+      ru: 🚀 Развернуть VPN сервер
+      default: 🚀 Deploy the VPN server
+    cb_data: run_deploy_cd
+  - text:
+      ru: 🔄 Ввести заново
+      default: 🔄 Reintroduce
+    cb_data: req_clients_cd
+  - <<: *stop_button
+  fallback:
+    parse_mode: null
+    text:
+      ru: ❌ Некорректный список клиентов
+      default: ❌ List of client is incorrect
+    buttons:
+    - text:
+        ru: 🔄 Повторно ввести список клиентов
+        default: 🔄 Try again
+      cb_data: req_clients_cd
+    -  <<: *stop_button
+
+run_deploy:
+  parse_mode: null
+  text:
+    ru: |
+      Задача запущена! 🚀🚀🚀
+      В течении нескольких минут пришлю данные для подключения к твоему VPN-серверу 🙃
+      (Для просмотра статуса задачи отправь мне команду /status)
+    default: |
+      Task is running! 🚀🚀🚀
+      Within a few minutes I will send data to connect to your VPN server 🙃
+      (To view the status of a task, send me a command /status)
+  fallback:
+    <<: *common_error
+
+successful_deploy:
+  parse_mode: null
+  text:
+    ru: |
+      Задача выполнена! ✅
+      Данные для подключения ниже ⬇️
+    default: |
+      Task done! ✅
+      Connection details below ⬇️
+  fallback:
+    <<: *common_error

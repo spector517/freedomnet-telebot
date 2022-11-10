@@ -1,0 +1,7 @@
+__pycache*
+*examples
+secret*
+config*
+*.log
+*.DS_Store
+.vscode
