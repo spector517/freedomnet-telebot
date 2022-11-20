@@ -51,7 +51,7 @@ logging.basicConfig(
     level=log_levels[argv[4]], 
     format='%(asctime)s [%(levelname)s]: %(message)s')
 handler = RotatingFileHandler(
-    filename='vpn_bot.log', encoding='UTF-8', mode='a',
+    filename='bot.log', encoding='UTF-8', mode='a',
     maxBytes=5_242_880, backupCount=10)
 logger = logging.getLogger()
 logger.addHandler(handler)
@@ -151,7 +151,7 @@ with open(argv[3], 'rt', encoding='UTF-8') as fd:
 ###################################################################################################
 #                       Define BOT and HANDLERS
 ###################################################################################################
-BOT = TeleBot(SECRET['vpn_bot']['token'])
+BOT = TeleBot(SECRET['bot']['token'])
 
 # -------------------- START the BOT --------------------------------------------------------------
 @BOT.message_handler(commands=['help', 'start'])
