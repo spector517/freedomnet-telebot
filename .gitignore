@@ -6,3 +6,4 @@ config*
 *.DS_Store
 .vscode
 .venv
+pyproject.toml
